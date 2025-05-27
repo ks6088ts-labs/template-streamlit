@@ -5,7 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from openai import APIConnectionError, APIStatusError, APITimeoutError, AzureOpenAI
 
-load_dotenv()
+load_dotenv(override=True)
 logger = getLogger(__name__)
 
 with st.sidebar:

@@ -8,7 +8,7 @@ from langchain_openai.chat_models.base import BaseChatOpenAI
 from openai import AzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
 
-load_dotenv()
+load_dotenv(override=True)
 logger = logging.getLogger(__name__)
 app = typer.Typer()
 

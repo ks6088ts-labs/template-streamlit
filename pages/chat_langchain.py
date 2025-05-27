@@ -7,7 +7,7 @@ from langchain_openai import AzureChatOpenAI
 from langchain_openai.chat_models.base import BaseChatOpenAI
 from openai import APIConnectionError, APIStatusError, APITimeoutError
 
-load_dotenv()
+load_dotenv(override=True)
 logger = getLogger(__name__)
 
 with st.sidebar:
