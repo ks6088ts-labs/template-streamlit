@@ -21,4 +21,4 @@ COPY . .
 # Install dependencies
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-CMD ["python", "template_streamlit/core.py"]
+CMD ["streamlit", "run", "main.py", "--server.port", "8000", "--server.address", "0.0.0.0"]

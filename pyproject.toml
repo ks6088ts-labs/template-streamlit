@@ -4,7 +4,13 @@ version = "0.0.1"
 description = "A GitHub template repository for Python"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "langchain-ollama>=0.3.3",
+    "langchain-openai>=0.3.18",
+    "python-dotenv>=1.1.0",
+    "streamlit>=1.45.1",
+    "typer>=0.16.0",
+]
 
 [project.optional-dependencies]
 docs = [
@@ -48,3 +54,8 @@ show_missing = true
 
 [tool.ty]
 environment = { python-version = "3.10" }
+
+[tool.ty.rules]
+unknown-argument = "ignore" # Ignore unknown arguments in function calls
+no-matching-overload = "ignore" # Ignore no matching overloads for function calls
+unsupported-operator = "ignore" # Ignore unsupported operators
