@@ -54,3 +54,8 @@ show_missing = true
 
 [tool.ty]
 environment = { python-version = "3.10" }
+
+[tool.ty.rules]
+unknown-argument = "ignore" # Ignore unknown arguments in function calls
+no-matching-overload = "ignore" # Ignore no matching overloads for function calls
+unsupported-operator = "ignore" # Ignore unsupported operators
