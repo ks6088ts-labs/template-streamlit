@@ -7,6 +7,7 @@
 ## LangChain
 
 - [How to stream runnables](https://python.langchain.com/docs/how_to/streaming/)
+- [Text Split Explorer](https://github.com/langchain-ai/text-split-explorer)
 
 ## Streamlit
 
