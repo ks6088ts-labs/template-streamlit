@@ -3,45 +3,104 @@ from os import getenv
 
 import streamlit as st
 from dotenv import load_dotenv
+from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI
-from langchain_openai.chat_models.base import BaseChatOpenAI
 from openai import APIConnectionError, APIStatusError, APITimeoutError
 
 load_dotenv(override=True)
 logger = getLogger(__name__)
 
 with st.sidebar:
-    azure_openai_endpoint = st.text_input(
-        label="AZURE_OPENAI_ENDPOINT",
-        value=getenv("AZURE_OPENAI_ENDPOINT"),
-        key="AZURE_OPENAI_ENDPOINT",
-        type="default",
+    "# Model"
+    model_choice = st.radio(
+        label="Active Model",
+        options=["azure", "ollama"],
+        index=0,
+        key="model_choice",
     )
-    azure_openai_api_key = st.text_input(
-        label="AZURE_OPENAI_API_KEY",
-        value=getenv("AZURE_OPENAI_API_KEY"),
-        key="AZURE_OPENAI_API_KEY",
-        type="password",
+    "# Settings"
+    if model_choice == "azure":
+        azure_openai_endpoint = st.text_input(
+            label="AZURE_OPENAI_ENDPOINT",
+            value=getenv("AZURE_OPENAI_ENDPOINT"),
+            key="AZURE_OPENAI_ENDPOINT",
+            type="default",
+        )
+        azure_openai_api_key = st.text_input(
+            label="AZURE_OPENAI_API_KEY",
+            value=getenv("AZURE_OPENAI_API_KEY"),
+            key="AZURE_OPENAI_API_KEY",
+            type="password",
+        )
+        azure_openai_api_version = st.text_input(
+            label="AZURE_OPENAI_API_VERSION",
+            value=getenv("AZURE_OPENAI_API_VERSION"),
+            key="AZURE_OPENAI_API_VERSION",
+            type="default",
+        )
+        azure_openai_gpt_model = st.text_input(
+            label="AZURE_OPENAI_GPT_MODEL",
+            value=getenv("AZURE_OPENAI_GPT_MODEL"),
+            key="AZURE_OPENAI_GPT_MODEL",
+            type="default",
+        )
+        stream_mode = st.checkbox(
+            label="ストリーム出力を有効にする",
+            value=True,
+            key="AZURE_OPENAI_STREAM_MODE",
+        )
+        "[Azure Portal](https://portal.azure.com/)"
+        "[Azure OpenAI Studio](https://oai.azure.com/resource/overview)"
+        "[View the source code](https://github.com/ks6088ts-labs/template-streamlit)"
+    else:
+        ollama_model = st.text_input(
+            label="OLLAMA_MODEL",
+            value=getenv("OLLAMA_MODEL"),
+            key="OLLAMA_MODEL",
+            type="default",
+        )
+        stream_mode = st.checkbox(
+            label="ストリーム出力を有効にする",
+            value=True,
+            key="OLLAMA_STREAM_MODE",
+        )
+        "[Ollama Docs](https://github.com/ollama/ollama)"
+        "[View the source code](https://github.com/ks6088ts-labs/template-streamlit)"
+
+
+def is_azure_configured():
+    return (
+        st.session_state.get("AZURE_OPENAI_API_KEY")
+        and st.session_state.get("AZURE_OPENAI_ENDPOINT")
+        and st.session_state.get("AZURE_OPENAI_API_VERSION")
+        and st.session_state.get("AZURE_OPENAI_GPT_MODEL")
+        and st.session_state.get("model_choice") == "azure"
     )
-    azure_openai_api_version = st.text_input(
-        label="AZURE_OPENAI_API_VERSION",
-        value=getenv("AZURE_OPENAI_API_VERSION"),
-        key="AZURE_OPENAI_API_VERSION",
-        type="default",
-    )
-    azure_openai_gpt_model = st.text_input(
-        label="AZURE_OPENAI_GPT_MODEL",
-        value=getenv("AZURE_OPENAI_GPT_MODEL"),
-        key="AZURE_OPENAI_GPT_MODEL",
-        type="default",
-    )
-    "[Azure Portal](https://portal.azure.com/)"
-    "[Azure OpenAI Studio](https://oai.azure.com/resource/overview)"
-    "[View the source code](https://github.com/ks6088ts-labs/template-streamlit/tree/main/apps/chat.py)"
+
+
+def is_ollama_configured():
+    return st.session_state.get("OLLAMA_MODEL") and st.session_state.get("model_choice") == "ollama"
 
 
 def is_configured():
-    return azure_openai_api_key and azure_openai_endpoint and azure_openai_api_version and azure_openai_gpt_model
+    return is_azure_configured() or is_ollama_configured()
+
+
+def get_model():
+    if is_azure_configured():
+        return AzureChatOpenAI(
+            azure_endpoint=st.session_state.get("AZURE_OPENAI_ENDPOINT"),
+            api_key=st.session_state.get("AZURE_OPENAI_API_KEY"),
+            openai_api_version=st.session_state.get("AZURE_OPENAI_API_VERSION"),
+            azure_deployment=st.session_state.get("AZURE_OPENAI_GPT_MODEL"),
+            temperature=0.0,
+        )
+    elif is_ollama_configured():
+        return ChatOllama(
+            model=st.session_state.get("OLLAMA_MODEL", ""),
+            temperature=0.0,
+        )
+    raise ValueError("No model is configured. Please set up the Azure or Ollama model in the sidebar.")
 
 
 st.title("chat app with LangChain SDK")
@@ -64,12 +123,7 @@ for message in st.session_state.messages:
 
 # Receive user input
 if prompt := st.chat_input(disabled=not is_configured()):
-    model: BaseChatOpenAI = AzureChatOpenAI(
-        azure_endpoint=azure_openai_endpoint,
-        api_key=azure_openai_api_key,
-        openai_api_version=azure_openai_api_version,
-        azure_deployment=azure_openai_gpt_model,
-    )
+    model = get_model()
 
     st.session_state.messages.append(
         {
@@ -82,28 +136,40 @@ if prompt := st.chat_input(disabled=not is_configured()):
         st.markdown(prompt)
 
     with st.spinner("Thinking..."):
-        # アシスタントの応答を表示するためのプレースホルダー
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
 
-            # Azure OpenAIにストリームリクエストを送信
             try:
-                for chunk in model.stream(
-                    input=[
-                        {
-                            "role": m["role"],
-                            "content": m["content"],
-                        }
-                        for m in st.session_state.messages
-                    ]
-                ):
-                    if chunk.content is not None:
-                        full_response += chunk.content
-                        message_placeholder.markdown(full_response + "▌")  # カーソルを模倣
-                message_placeholder.markdown(full_response)  # 最終的な応答
+                if stream_mode:
+                    # ストリーム出力
+                    for chunk in model.stream(
+                        input=[
+                            {
+                                "role": m["role"],
+                                "content": m["content"],
+                            }
+                            for m in st.session_state.messages
+                        ]
+                    ):
+                        if chunk.content is not None:
+                            full_response += chunk.content
+                            message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(full_response)
+                else:
+                    # 一括出力
+                    response = model.invoke(
+                        input=[
+                            {
+                                "role": m["role"],
+                                "content": m["content"],
+                            }
+                            for m in st.session_state.messages
+                        ]
+                    )
+                    full_response = response.content if hasattr(response, "content") else str(response)
+                    message_placeholder.markdown(full_response)
 
-                # アシスタントの応答を履歴に追加
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
 
             except APITimeoutError as e:
