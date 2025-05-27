@@ -58,7 +58,7 @@ jupyterlab: ## run Jupyter Lab
 # ---
 DOCKER_REPO_NAME ?= ks6088ts
 DOCKER_IMAGE_NAME ?= template-streamlit
-DOCKER_COMMAND ?=
+DOCKER_COMMAND ?= python template_streamlit/core.py
 
 # Tools
 TOOLS_DIR ?= /usr/local/bin
@@ -74,7 +74,7 @@ docker-build: ## build Docker image
 
 .PHONY: docker-run
 docker-run: ## run Docker container
-	docker run --rm $(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME):$(GIT_TAG) $(DOCKER_COMMAND)
+	docker run --rm -v $(PWD)/.env:/app/.env -p 8000:8000 $(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME):$(GIT_TAG) $(DOCKER_COMMAND)
 
 .PHONY: docker-lint
 docker-lint: ## lint Dockerfile
@@ -103,3 +103,13 @@ docs-serve: ## serve documentation
 
 .PHONY: ci-test-docs
 ci-test-docs: docs ## run CI test for documentation
+
+# ---
+# Project
+# ---
+
+.PHONY: streamlit
+streamlit: ## run Streamlit app
+	uv run streamlit run main.py \
+		--server.port 8000 \
+		--server.address 0.0.0.0
