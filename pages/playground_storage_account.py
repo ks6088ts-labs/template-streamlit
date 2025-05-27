@@ -12,6 +12,12 @@ logger = getLogger(__name__)
 
 with st.sidebar:
     "Blob"
+    authentication_method = st.selectbox(
+        label="Authentication Method",
+        options=["CONNECTION_STRING", "PASSWORDLESS"],
+        index=0,
+        key="AZURE_STORAGE_AUTHENTICATION_METHOD",
+    )
     connection_string = st.text_input(
         label="Connection String",
         value=getenv("AZURE_STORAGE_CONNECTION_STRING"),
@@ -20,18 +26,19 @@ with st.sidebar:
     )
     container_name = st.text_input(
         label="Container Name",
-        value=getenv("AZURE_STORAGE_CONTAINER_NAME"),
+        value="container",
         key="AZURE_STORAGE_CONTAINER_NAME",
         type="default",
     )
     blob_name = st.text_input(
         label="Blob Name",
-        value=getenv("AZURE_STORAGE_BLOB_NAME"),
+        value="blob",
         key="AZURE_STORAGE_BLOB_NAME",
         type="default",
     )
     blob_data = st.text_area(
         label="Blob Data",
+        value="This is a sample blob data.",
         key="AZURE_STORAGE_BLOB_DATA",
         height=200,
     )
@@ -39,6 +46,13 @@ with st.sidebar:
 
 def is_configured():
     return connection_string and container_name and blob_name
+
+
+def create_client():
+    return Client(
+        settings=Settings(),
+        authentication_method=authentication_method,
+    )
 
 
 st.title("Azure Storage Playground")
@@ -50,32 +64,35 @@ st.write("### Container Operations")
 
 # Create container
 if st.button("Create Container", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
-        response = client.create_container(container_name)
-        st.success(f"Container created: {response}")
+        with st.spinner("Creating container..."):
+            response = client.create_container(container_name)
+            st.success(f"Container created: {response}")
     except Exception as e:
         st.error(f"Error creating container: {e}")
         logger.error(f"Error creating container: {e}")
 
 # Delete container
 if st.button("Delete Container", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
-        response = client.delete_container(container_name)
-        st.success(f"Container deleted: {response}")
+        with st.spinner("Deleting container..."):
+            response = client.delete_container(container_name)
+            st.success(f"Container deleted: {response}")
     except Exception as e:
         st.error(f"Error deleting container: {e}")
         logger.error(f"Error deleting container: {e}")
 
 # List containers
 if st.button("List Containers", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
-        containers = client.list_containers()
-        st.write("Containers:")
-        for container in containers:
-            st.write(f"- {container['name']}")
+        with st.spinner("Listing containers..."):
+            containers = client.list_containers()
+            st.write("Containers:")
+            for container in containers:
+                st.write(f"- {container['name']}")
     except Exception as e:
         st.error(f"Error listing containers: {e}")
         logger.error(f"Error listing containers: {e}")
@@ -84,7 +101,7 @@ st.write("### Blob Operations")
 
 # Upload blob
 if st.button("Upload Blob", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
         with st.spinner("Uploading blob..."):
             response = client.upload_blob(container_name, blob_name, blob_data)
@@ -95,7 +112,7 @@ if st.button("Upload Blob", disabled=not is_configured()):
 
 # Download blob
 if st.button("Download Blob", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
         with st.spinner("Downloading blob..."):
             data = client.download_blob(container_name, blob_name)
@@ -107,22 +124,24 @@ if st.button("Download Blob", disabled=not is_configured()):
 
 # Delete blob
 if st.button("Delete Blob", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
-        response = client.delete_blob(container_name, blob_name)
-        st.success(f"Blob deleted: {response}")
+        with st.spinner("Deleting blob..."):
+            response = client.delete_blob(container_name, blob_name)
+            st.success(f"Blob deleted: {response}")
     except Exception as e:
         st.error(f"Error deleting blob: {e}")
         logger.error(f"Error deleting blob: {e}")
 
 # List blobs
 if st.button("List Blobs", disabled=not is_configured()):
-    client = Client(Settings())
+    client = create_client()
     try:
-        blobs = client.list_blobs(container_name)
-        st.write("Blobs:")
-        for blob in blobs:
-            st.write(f"- {blob['name']}")
+        with st.spinner("Listing blobs..."):
+            blobs = client.list_blobs(container_name)
+            st.write("Blobs:")
+            for blob in blobs:
+                st.write(f"- {blob['name']}")
     except Exception as e:
         st.error(f"Error listing blobs: {e}")
         logger.error(f"Error listing blobs: {e}")

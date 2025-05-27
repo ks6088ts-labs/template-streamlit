@@ -1,14 +1,26 @@
+from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
 from template_streamlit.storage.settings import Settings
 
 
 class Client:
-    def __init__(self, settings: Settings):
-        self.settings = settings
-        self.blob_service_client = BlobServiceClient.from_connection_string(
-            self.settings.azure_storage_connection_string,
-        )
+    def __init__(
+        self,
+        settings: Settings,
+        authentication_method: str = "CONNECTION_STRING",
+    ):
+        if authentication_method == "CONNECTION_STRING":
+            self.blob_service_client = BlobServiceClient.from_connection_string(
+                settings.azure_storage_connection_string,
+            )
+        elif authentication_method == "PASSWORDLESS":
+            self.blob_service_client = BlobServiceClient(
+                account_url=settings.azure_storage_account_url,
+                credential=DefaultAzureCredential(),
+            )
+        if not self.blob_service_client:
+            raise ValueError("Failed to create BlobServiceClient. Check your settings.")
 
     # Container Operations
     def create_container(self, container_name: str):

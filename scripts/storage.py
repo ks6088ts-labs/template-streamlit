@@ -13,41 +13,51 @@ app = typer.Typer(
     add_completion=False,
     help="Azure Storage CLI",
 )
-client = Client(Settings())
+
+
+def get_client(authentication_method: str):
+    """Get the storage client."""
+    return Client(
+        settings=Settings(),
+        authentication_method=authentication_method,
+    )
 
 
 @app.command()
 def create_container(
     container_name: str,
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Creating container: {container_name}")
-    response = client.create_container(container_name)
+    response = get_client(authentication_method).create_container(container_name)
     print(f"Container created: {response}")
 
 
 @app.command()
 def delete_container(
     container_name: str,
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Deleting container: {container_name}")
-    response = client.delete_container(container_name)
+    response = get_client(authentication_method).delete_container(container_name)
     print(f"Container deleted: {response}")
 
 
 @app.command()
 def list_containers(
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info("Listing containers")
-    containers = client.list_containers()
+    containers = get_client(authentication_method).list_containers()
     for container in containers:
         print(f"Container: {container['name']}")
 
@@ -57,12 +67,13 @@ def upload_blob(
     container_name: str,
     blob_name: str,
     data: str,
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Uploading blob: {blob_name} to container: {container_name}")
-    response = client.upload_blob(container_name, blob_name, data)
+    response = get_client(authentication_method).upload_blob(container_name, blob_name, data)
     print(f"Blob uploaded: {response}")
 
 
@@ -70,12 +81,13 @@ def upload_blob(
 def download_blob(
     container_name: str,
     blob_name: str,
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Downloading blob: {blob_name} from container: {container_name}")
-    data = client.download_blob(container_name, blob_name)
+    data = get_client(authentication_method).download_blob(container_name, blob_name)
     print(f"Blob downloaded: {data}")
 
 
@@ -83,24 +95,26 @@ def download_blob(
 def delete_blob(
     container_name: str,
     blob_name: str,
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Deleting blob: {blob_name} from container: {container_name}")
-    response = client.delete_blob(container_name, blob_name)
+    response = get_client(authentication_method).delete_blob(container_name, blob_name)
     print(f"Blob deleted: {response}")
 
 
 @app.command()
 def list_blobs(
     container_name: str,
+    authentication_method: str = "CONNECTION_STRING",
     verbose: bool = False,
 ):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Listing blobs in container: {container_name}")
-    blobs = client.list_blobs(container_name)
+    blobs = get_client(authentication_method).list_blobs(container_name)
     for blob in blobs:
         print(f"Blob: {blob['name']}")
 
