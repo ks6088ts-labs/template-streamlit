@@ -33,9 +33,10 @@ with st.sidebar:
         key="AZURE_OPENAI_GPT_MODEL",
         type="default",
     )
+    stream_mode = st.checkbox(label="ストリーム出力を有効にする", value=True, key="AZURE_OPENAI_STREAM_MODE")
     "[Azure Portal](https://portal.azure.com/)"
     "[Azure OpenAI Studio](https://oai.azure.com/resource/overview)"
-    "[View the source code](https://github.com/ks6088ts-labs/template-streamlit/tree/main/apps/chat.py)"
+    "[View the source code](https://github.com/ks6088ts-labs/template-streamlit)"
 
 
 def is_configured():
@@ -79,36 +80,49 @@ if prompt := st.chat_input(disabled=not is_configured()):
         st.markdown(prompt)
 
     with st.spinner("Thinking..."):
-        # アシスタントの応答を表示するためのプレースホルダー
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
 
-            # Azure OpenAIにストリームリクエストを送信
             try:
-                stream = client.chat.completions.create(
-                    model=azure_openai_gpt_model,
-                    messages=[
-                        {
-                            "role": m["role"],
-                            "content": m["content"],
-                        }
-                        for m in st.session_state.messages
-                    ],
-                    stream=True,  # ストリーミングを有効にする
-                )
+                if stream_mode:
+                    # ストリーム出力
+                    stream = client.chat.completions.create(
+                        model=azure_openai_gpt_model,
+                        messages=[
+                            {
+                                "role": m["role"],
+                                "content": m["content"],
+                            }
+                            for m in st.session_state.messages
+                        ],
+                        stream=True,
+                    )
 
-                for chunk in stream:
-                    if len(chunk.choices) <= 0:
-                        # logger.warning(f"Received an empty chunk from the stream response: {chunk}")
-                        continue
+                    for chunk in stream:
+                        if len(chunk.choices) <= 0:
+                            continue
+                        if chunk.choices[0].delta.content is not None:
+                            full_response += chunk.choices[0].delta.content
+                            message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(full_response)
+                else:
+                    # 一括出力
+                    response = client.chat.completions.create(
+                        model=azure_openai_gpt_model,
+                        messages=[
+                            {
+                                "role": m["role"],
+                                "content": m["content"],
+                            }
+                            for m in st.session_state.messages
+                        ],
+                        stream=False,
+                    )
+                    # stream=False の場合は choices[0].message.content に全応答が入る
+                    full_response = response.choices[0].message.content
+                    message_placeholder.markdown(full_response)
 
-                    if chunk.choices[0].delta.content is not None:
-                        full_response += chunk.choices[0].delta.content
-                        message_placeholder.markdown(full_response + "▌")  # カーソルを模倣
-                message_placeholder.markdown(full_response)  # 最終的な応答
-
-                # アシスタントの応答を履歴に追加
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
 
             except APITimeoutError as e:
