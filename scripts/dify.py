@@ -38,7 +38,13 @@ def workflows_run(
             "requirements": input,
         }
     )
-    print(json.dumps(response, indent=2))
+    print(
+        json.dumps(
+            response,
+            indent=2,
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":
