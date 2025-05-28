@@ -21,16 +21,7 @@ async def async_get_users():
         settings=Settings(),
     )
     users = await client.get_users()
-    for user in users.value:
-        typer.echo(f"User: {user.display_name}, Email: {user.mail}, ID: {user.id}")
-
-
-async def async_get_calendar(user_id: str):
-    client = Client(
-        settings=Settings(),
-    )
-    calendar = await client.get_calendar_events(user_id)
-    typer.echo(f"Calendar for user {calendar.value}:")
+    return users.value
 
 
 async def async_get_calendar_events(user_id: str):
@@ -38,8 +29,7 @@ async def async_get_calendar_events(user_id: str):
         settings=Settings(),
     )
     events = await client.get_calendar_events(user_id)
-    for event in events.value:
-        typer.echo(f"Event: {event.subject}, Start: {event.start}, End: {event.end}")
+    return events.value
 
 
 @app.command()
@@ -49,18 +39,9 @@ def get_users(
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
 
-    asyncio.run(async_get_users())
-
-
-@app.command()
-def get_calendar(
-    user_id: str,
-    verbose: bool = False,
-):
-    if verbose:
-        logging.basicConfig(level=logging.DEBUG)
-
-    asyncio.run(async_get_calendar(user_id))
+    users = asyncio.run(async_get_users())
+    for user in users:
+        typer.echo(f"User: {user.display_name}, Email: {user.mail}, ID: {user.id}")
 
 
 @app.command()
@@ -71,7 +52,9 @@ def get_calendar_events(
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
 
-    asyncio.run(async_get_calendar_events(user_id))
+    events = asyncio.run(async_get_calendar_events(user_id))
+    for event in events:
+        typer.echo(f"Event: {event.subject}, Start: {event.start}, End: {event.end}")
 
 
 if __name__ == "__main__":

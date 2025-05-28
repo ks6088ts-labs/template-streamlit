@@ -10,6 +10,7 @@
 
 - [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer)
 - [Build Python apps with Microsoft Graph](https://learn.microsoft.com/en-us/graph/tutorials/python?tabs=aad)
+- [kanazawazawa/msgraph-python-sdk-sample-main](https://github.com/kanazawazawa/msgraph-python-sdk-sample-main)
 
 ## LangChain
 
