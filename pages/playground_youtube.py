@@ -35,7 +35,7 @@ if not is_configured():
 
 if st.button("Transcribe Video", disabled=not is_configured()):
     video_id = st.session_state.get("YOUTUBE_VIDEO_ID")
-    languages = st.session_state.get("YOUTUBE_LANGUAGES").split(",")
+    languages = st.session_state.get("YOUTUBE_LANGUAGES", "").split(",")
 
     try:
         with st.spinner("Fetching transcript..."):
