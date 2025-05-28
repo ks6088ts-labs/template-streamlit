@@ -24,3 +24,15 @@
 ## Pydantic
 
 - [Reading a .env file](https://fastapi.tiangolo.com/advanced/settings/#reading-a-env-file)
+
+## YouTube
+
+- [YouTube Developers](https://developers.google.com/youtube)
+- [YouTube Transcript API](https://github.com/jdepoix/youtube-transcript-api)
+- [youtube-dl](https://github.com/ytdl-org/youtube-dl)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+
+```shell
+# extract video titles, URLs and IDs from a YouTube playlist using yt-dlp
+$ yt-dlp --flat-playlist --print "%(title)s,%(webpage_url)s,%(id)s" "https://www.youtube.com/playlist?list=PLlrxD0HtieHgFYS4DKbJ_xCYNE94ZLJjj" > playlist_info.csv
+```
