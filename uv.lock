@@ -3479,6 +3479,7 @@ source = { editable = "." }
 dependencies = [
     { name = "azure-identity" },
     { name = "azure-storage-blob" },
+    { name = "httpx" },
     { name = "langchain-ollama" },
     { name = "langchain-openai" },
     { name = "langchain-text-splitters" },
@@ -3511,6 +3512,7 @@ dev = [
 requires-dist = [
     { name = "azure-identity", specifier = ">=1.23.0" },
     { name = "azure-storage-blob", specifier = ">=12.25.1" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "langchain-ollama", specifier = ">=0.3.3" },
     { name = "langchain-openai", specifier = ">=0.3.18" },
     { name = "langchain-text-splitters", specifier = ">=0.3.8" },
