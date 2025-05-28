@@ -3,14 +3,17 @@ from os import getenv
 
 import typer
 from dotenv import load_dotenv
-from langchain_openai import AzureChatOpenAI
-from langchain_openai.chat_models.base import BaseChatOpenAI
-from openai import AzureOpenAI
 from openai.types.chat.chat_completion import ChatCompletion
+
+from template_streamlit.ai.client import Client
+from template_streamlit.ai.settings import Settings
 
 load_dotenv(override=True)
 logger = logging.getLogger(__name__)
-app = typer.Typer()
+app = typer.Typer(
+    add_completion=False,
+    help="Azure OpenAI CLI",
+)
 
 
 @app.command()
@@ -23,14 +26,12 @@ def openai(
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Processing with OpenAI: {prompt}")
 
-    client = AzureOpenAI(
-        api_key=getenv("AZURE_OPENAI_API_KEY"),
-        api_version=getenv("AZURE_OPENAI_API_VERSION"),
-        azure_endpoint=getenv("AZURE_OPENAI_ENDPOINT"),
-    )
+    azure_openai = Client(
+        settings=Settings(),
+    ).get_azure_openai()
 
     if stream:
-        for chunk in client.chat.completions.create(
+        for chunk in azure_openai.chat.completions.create(
             model=getenv("AZURE_OPENAI_GPT_MODEL"),
             messages=[
                 {
@@ -44,7 +45,7 @@ def openai(
                 continue
             print(chunk.choices[0].delta.content, end="|", flush=True)
     else:
-        resonse: ChatCompletion = client.chat.completions.create(
+        resonse: ChatCompletion = azure_openai.chat.completions.create(
             model=getenv("AZURE_OPENAI_GPT_MODEL"),
             messages=[
                 {
@@ -66,18 +67,15 @@ def langchain(
         logging.basicConfig(level=logging.DEBUG)
     logger.info(f"Processing with LangChain: {prompt}")
 
-    model: BaseChatOpenAI = AzureChatOpenAI(
-        azure_endpoint=getenv("AZURE_OPENAI_ENDPOINT"),
-        api_key=getenv("AZURE_OPENAI_API_KEY"),
-        openai_api_version=getenv("AZURE_OPENAI_API_VERSION"),
-        azure_deployment=getenv("AZURE_OPENAI_GPT_MODEL"),
-    )
+    azure_chat_openai = Client(
+        settings=Settings(),
+    ).get_azure_chat_openai()
 
     if stream:
-        for chunk in model.stream(input=prompt):
+        for chunk in azure_chat_openai.stream(input=prompt):
             print(chunk.content, end="|", flush=True)
     else:
-        response = model.invoke(input=prompt)
+        response = azure_chat_openai.invoke(input=prompt)
         print(response.content)
 
 
