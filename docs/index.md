@@ -36,3 +36,7 @@
 # extract video titles, URLs and IDs from a YouTube playlist using yt-dlp
 $ yt-dlp --flat-playlist --print "%(title)s,%(webpage_url)s,%(id)s" "https://www.youtube.com/playlist?list=PLlrxD0HtieHgFYS4DKbJ_xCYNE94ZLJjj" > playlist_info.csv
 ```
+
+## Dify
+
+- [Getting Started > API Access](https://docs.dify.ai/en/openapi-api-access-readme)
