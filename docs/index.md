@@ -17,6 +17,12 @@
 - [How to stream runnables](https://python.langchain.com/docs/how_to/streaming/)
 - [Text Split Explorer](https://github.com/langchain-ai/text-split-explorer)
 
+## LangGraph
+
+- [LangGraph quickstart](https://langchain-ai.github.io/langgraph/agents/agents/)
+- [LangChain Community > Streamlit](https://python.langchain.com/docs/integrations/callbacks/streamlit/)
+- [github.com/shiv248/Streamlit-x-LangGraph-Cookbooks > StreamlitCallbackHandler_example](https://github.com/shiv248/Streamlit-x-LangGraph-Cookbooks/tree/master/StreamlitCallbackHandler_example)
+
 ## Streamlit
 
 - [Secrets management](https://docs.streamlit.io/develop/concepts/connections/secrets-management)
