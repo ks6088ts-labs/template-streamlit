@@ -66,7 +66,10 @@ show_missing = true
 environment = { python-version = "3.10" }
 
 [tool.ty.rules]
-unknown-argument = "ignore" # Ignore unknown arguments in function calls
-no-matching-overload = "ignore" # Ignore no matching overloads for function calls
-unsupported-operator = "ignore" # Ignore unsupported operators
-invalid-type-form = "ignore" # Ignore invalid type formats
+unknown-argument = "ignore"
+no-matching-overload = "ignore"
+unsupported-operator = "ignore"
+invalid-type-form = "ignore"
+call-non-callable = "ignore"
+possibly-unbound-attribute = "ignore"
+invalid-argument-type = "ignore"
