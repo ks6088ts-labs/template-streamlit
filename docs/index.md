@@ -22,6 +22,7 @@
 - [LangGraph quickstart](https://langchain-ai.github.io/langgraph/agents/agents/)
 - [LangChain Community > Streamlit](https://python.langchain.com/docs/integrations/callbacks/streamlit/)
 - [github.com/shiv248/Streamlit-x-LangGraph-Cookbooks > StreamlitCallbackHandler_example](https://github.com/shiv248/Streamlit-x-LangGraph-Cookbooks/tree/master/StreamlitCallbackHandler_example)
+- [Software Design 誌「実践 LLM アプリケーション開発」第 22 回サンプルコード](https://github.com/mahm/softwaredesign-llm-application/tree/main/22)
 
 ## Streamlit
 
