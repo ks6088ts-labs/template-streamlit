@@ -792,7 +792,7 @@ name = "exceptiongroup"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0b/9f/a65090624ecf468cdca03533906e7c69ed7588582240cfe7cc9e770b50eb/exceptiongroup-1.3.0.tar.gz", hash = "sha256:b241f5885f560bc56a59ee63ca4c6a8bfa46ae4ad651af316d4e81817bb9fd88", size = 29749, upload-time = "2025-05-10T17:42:51.123Z" }
 wheels = [
@@ -2093,7 +2093,7 @@ wheels = [
 
 [[package]]
 name = "msgraph-sdk"
-version = "1.44.0"
+version = "1.45.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "azure-identity" },
@@ -2103,9 +2103,9 @@ dependencies = [
     { name = "microsoft-kiota-serialization-text" },
     { name = "msgraph-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/04/85/5a30014f865cbda231e3abd0b1776d08e45a4b4ac6d2824130408a65837b/msgraph_sdk-1.44.0.tar.gz", hash = "sha256:7808cc40514182de07d4e121d096cd2aa11655713cd4ccb05722c945845998d7", size = 6051572, upload-time = "2025-09-11T18:38:44.049Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/af/70b6c875b9dc57ebe4ef315a2c7eed64ff9ea44e12de26b604a284b2fb60/msgraph_sdk-1.45.0.tar.gz", hash = "sha256:b23ab2260604ae85f17d668a93b79eebb1861c02b91e144bea32975b452f7709", size = 6050549, upload-time = "2025-09-16T20:42:40.078Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4f/ed/ee2ef170b11f48f3b76d136f0cf36c57fdf65c7f5ae01badd17c54d88ca1/msgraph_sdk-1.44.0-py3-none-any.whl", hash = "sha256:14f47ef1326e26b346fcda695d47ad3d8920f5234c71eae6eba970152f5d66d5", size = 24775012, upload-time = "2025-09-11T18:38:40.949Z" },
+    { url = "https://files.pythonhosted.org/packages/95/30/10617d95c604101967300b9b68e7efa7bd3b57feda32522418e1bbfb2e52/msgraph_sdk-1.45.0-py3-none-any.whl", hash = "sha256:298daf1eaed5019c79ba85306c4e526502317ebbd1369a19ba53cee3c5bac09d", size = 24775024, upload-time = "2025-09-16T20:42:37.031Z" },
 ]
 
 [[package]]
